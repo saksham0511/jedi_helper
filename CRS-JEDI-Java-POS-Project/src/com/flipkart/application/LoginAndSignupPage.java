@@ -8,6 +8,7 @@ import com.flipkart.operations.AdminOperations;
 import com.flipkart.operations.AuthCredInterface;
 import com.flipkart.operations.AuthCredOperations;
 
+import javax.naming.AuthenticationException;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -42,14 +43,24 @@ public class LoginAndSignupPage {
 
                     System.out.print(space + "Enter Password : ");
                     password = sc.next();
-                    isAuthenticated = authCredInterface.authenticateUser(userId, password, Role.STUDENT);
+                    try {
+                        isAuthenticated = authCredInterface.authenticateUser(userId, password, Role.STUDENT);
+                    }
+                    catch(Exception e){
+                        System.out.println("Authentication failed with error : " + e.getMessage());
+                    }
                     break;
                 case 2:
                     System.out.print(space + "Enter UserId : ");
                     userId = sc.nextInt();
                     System.out.print(space + "Enter Password : ");
                     password = sc.next();
-                    isAuthenticated = authCredInterface.authenticateUser(userId, password, Role.PROFESSOR);
+                    try {
+                        isAuthenticated = authCredInterface.authenticateUser(userId, password, Role.PROFESSOR);
+                    }
+                    catch(Exception e){
+                        System.out.println("Authentication failed with error : " + e.getMessage());
+                    }
                     break;
                 case 3:
                     System.out.print(space + "Enter UserId : ");
@@ -59,7 +70,9 @@ public class LoginAndSignupPage {
                     if(userId == 4001 && password.equals("admin")){
                         isAuthenticated = true;
                     }
-                    break;
+                    else{
+                        System.out.println("Invalid Credentials");
+                    }
                 default : System.out.println("Invalid role");
 
             }
