@@ -10,12 +10,14 @@ approve grades
  */
 
 
+import com.flipkart.bean.Student;
+import com.flipkart.constant.BankEnum;
+import com.flipkart.constant.NotificationType;
+import com.flipkart.constant.PaymentModeEnum;
 import com.flipkart.exception.*;
-import com.flipkart.operations.AdminInterface;
-import com.flipkart.operations.AdminOperations;
-import com.flipkart.operations.CourseCatalogInterface;
-import com.flipkart.operations.CourseCatalogOperations;
+import com.flipkart.operations.*;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class AdminPage {
@@ -38,7 +40,9 @@ public class AdminPage {
                     space + "2.Remove course\n" +
                     space + "3.Approve Student\n" +
                     space + "4.Add Professor\n" +
-                    space + "5.Remove Professor\n");
+                    space + "5.Remove Professor\n" +
+                     space+ "6.View Unapproved Students\n"+
+                    space+"7.Approve Student Fees\n");
             Scanner sc = new Scanner(System.in);
             System.out.print(option);
             int choice = sc.nextInt();
@@ -47,8 +51,10 @@ public class AdminPage {
                     try {
                         System.out.print(space + "Enter course name to add : ");
                         String addCourseName = sc.next();
+                        System.out.print(space+"Enter Course Fees: ");
+                        int fees = sc.nextInt();
                         int id = -1;
-                        id = adminOperations.addNewCourse(addCourseName);
+                        id = adminOperations.addNewCourse(addCourseName,fees);
                         if (id == 1) {
                             System.out.println(space + "Course added successfully");
                         }
@@ -121,6 +127,12 @@ public class AdminPage {
                         System.out.println(ex.getMessage());
                     }
                     break;
+                case 6:
+                    unapprovedStudent();
+                    break;
+                case 7:
+                    approveStudentFees();
+                    break;
                 default:
                     System.out.println(space + "Invalid Action");
                     break;
@@ -135,6 +147,45 @@ public class AdminPage {
         }
         System.out.println(frameBottom);
     }
-
-
+    private void unapprovedStudent(){
+        AdminInterface adminInterface = new AdminOperations();
+        List<Student> studentList = adminInterface.unApprovedStudent();
+        System.out.println(space+"UnApproved Student");
+        System.out.println(space+"-----------------------------------------------------");
+        System.out.println(space+"Student ID"+"        "+"Student Name"+"        "+"Student Email"+"        "+"Student Address");
+        for (Student student: studentList){
+            System.out.print(space+student.getUserId()+"        ");
+            System.out.print(student.getName()+"        ");
+            System.out.print(student.getEmail()+"        ");
+            System.out.println(student.getAddress());
+        }
+    }
+    private void approveStudentFees(){
+        System.out.print(space+"Enter Student ID:");
+        Scanner sc = new Scanner(System.in);
+        int studentId = sc.nextInt();
+        CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
+        int check = courseRegistrationInterface.numOfRegisteredCourses(studentId);
+        if (check==0){
+            System.out.println(space+"Student Registration is Pending");
+            return;
+        }
+        StudentInterface studentInterface = new StudentOperations();
+        boolean checkFeePaid = studentInterface.isFeefeespaidDB(studentId);
+        if (checkFeePaid){
+            System.out.println(space+"Student Fees is Already Paid");
+            return;
+        }
+        PaymentInterface paymentInterface = new PaymentOperations();
+        int amount = paymentInterface.getPayment(studentId);
+        NotificationInterface notificationInterface = new NotificationOperations();
+        int status = notificationInterface.sendNotification(NotificationType.PAYMENT,studentId, PaymentModeEnum.OFFLINE, BankEnum.CASH,amount);
+        if (status!=0){
+            System.out.println(space+"Student Approval Successful");
+            System.out.println(space+"Reference ID:"+status);
+        }
+        else {
+            System.out.println(space+"Student Approval Unsuccessful. Try Again!");
+        }
+    }
 }

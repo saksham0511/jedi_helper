@@ -19,6 +19,7 @@ public class ProfessorDB implements ProfessorDBInterface {
     Connection conn = null;
     PreparedStatement pdstmt = null;
     Statement stmt = null;
+    PreparedStatement pdstmt2 = null;
 
     public ProfessorDB(){
         try {
@@ -33,15 +34,27 @@ public class ProfessorDB implements ProfessorDBInterface {
     @Override
     public boolean teachCourseDB(int profId, int courseId){
         try {
-            String sqlQuery = "update course set professorid = ? where courseid = ?";
-            pdstmt = conn.prepareStatement(sqlQuery);
-            pdstmt.setInt(1, profId);
-            pdstmt.setInt(2, courseId);
-            int rs = pdstmt.executeUpdate();
-            if (rs == 0) {
-                return false;
+            int status=0;
+            String query = "select professorid from course where courseid = ?";
+            pdstmt2 = conn.prepareStatement(query);
+            pdstmt2.setInt(1, courseId);
+            ResultSet rs2 = pdstmt2.executeQuery();
+            if(rs2.next())
+                status = rs2.getInt(1);
+            if (status == -1) {
+                String sqlQuery = "update course set professorid = ? where courseid = ?";
+                pdstmt = conn.prepareStatement(sqlQuery);
+                pdstmt.setInt(1, profId);
+                pdstmt.setInt(2, courseId);
+                int rs = pdstmt.executeUpdate();
+                if (rs == 0) {
+                    return false;
+                }
+                return true;
             }
-            return true;
+            else{
+                System.out.println("Course is already allotted.");
+            }
         }
         catch(SQLException ex){
             ex.getMessage();
@@ -54,15 +67,14 @@ public class ProfessorDB implements ProfessorDBInterface {
     public List<Student> getEnrolledStudentsDB(int courseId) {
         List<Student> studentList = new ArrayList<>();
         String demo = new String("demo");
-
         try {
-            String sqlQuery = "select * from GradeCard where CourseID = ?";
+            String sqlQuery = "select student.studentid, student.studentname from student natural join gradecard where CourseID = ?";
             pdstmt = conn.prepareStatement(sqlQuery);
             pdstmt.setInt(1, courseId);
             ResultSet rs = pdstmt.executeQuery();
             while(rs.next()){
-                Student student = new Student(demo, demo, demo, demo);
-                student.setUserId(rs.getInt(2));
+                Student student = new Student(rs.getString(2), demo, demo, demo);
+                student.setUserId(rs.getInt(1));
                 studentList.add(student);
             }
             return studentList;

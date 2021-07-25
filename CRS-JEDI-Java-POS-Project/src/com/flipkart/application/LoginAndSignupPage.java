@@ -21,16 +21,16 @@ public class LoginAndSignupPage {
 
     public static void login() throws CourseRemovalFailedException, ProfessorAlreadyExistException, CourseAlreadyExistException, ApprovalFailedException, ProfessorRemovalFailedException {
         Scanner sc = new Scanner(System.in);
+        System.out.println(frameTop);
         while (true){
-            System.out.println(frameTop);
-            System.out.println(space + "what is your role?");
-            System.out.println(space + "  1.student\n" +
+
+            System.out.println(space + "What is your role?");
+            System.out.println(space + "  1.Student\n" +
                     space + "  2.Professor\n" +
                     space + "  3.Admin");
             System.out.print(option);
 
             int choice = sc.nextInt();
-            System.out.println(frameTop);
             AuthCredInterface authCredInterface = new AuthCredOperations();
             int userId=0;
             String password;

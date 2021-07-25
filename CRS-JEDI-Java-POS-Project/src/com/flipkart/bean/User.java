@@ -18,7 +18,9 @@ public class User {
         this.email = email;
         this.address = address;
     }
+    public User(){
 
+    }
     public String getPassword() {
         return password;
     }

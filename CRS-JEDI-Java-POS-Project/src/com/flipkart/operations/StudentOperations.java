@@ -1,26 +1,24 @@
 package com.flipkart.operations;
 
+import com.flipkart.DAO.*;
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Student;
 
+import java.util.List;
+
 public class StudentOperations implements StudentInterface{
+
+    StudentDBInterface studentDBInterface;
+
     @Override
-    public Course[] getRegisteredCourses() {
-        return new Course[0];
+    public List<Course> getRegisteredCourses(int studId) {
+        studentDBInterface = new StudentDB();
+        return studentDBInterface.getRegisteredCoursesDB(studId);
     }
 
     @Override
-    public boolean dropCourse(int courseId) {
-        return false;
-    }
-
-    @Override
-    public int addCourse(int courseId) {
-        return 0;
-    }
-
-    @Override
-    public int payfees() {
-        return 0;
+    public boolean isFeefeespaidDB(int studentId) {
+        StudentDBInterface studentDBInterface = new StudentDB();
+        return studentDBInterface.isFeefeespaidDB(studentId);
     }
 }

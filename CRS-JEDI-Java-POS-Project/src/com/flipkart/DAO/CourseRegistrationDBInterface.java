@@ -4,8 +4,9 @@ import com.flipkart.bean.Course;
 
 public interface CourseRegistrationDBInterface {
 
-    public int addCourseDB(int courseId);
-    public boolean removeCourseDB(int courseId);
+    public int addCourseDB(int courseId,int studId);
+    public boolean removeCourseDB(int courseId,int studId);
     public Course[] registeredCourseDB(int userId);
     public int makePaymentDB(int courseId);
+    public int numOfRegisteredCourses(int studId);
 }

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Student extends User{
+    public Student(){
+
+    }
     private boolean isApproved;
     private List<Course> enrolledCourses;
 
@@ -30,5 +33,6 @@ public class Student extends User{
         this.isApproved = false;
         enrolledCourses = new ArrayList<>();
     }
+
 
 }

@@ -4,6 +4,8 @@ import com.flipkart.bean.Student;
 import com.flipkart.exception.*;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdminDB implements AdminDBInterface {
 
@@ -48,7 +50,7 @@ public class AdminDB implements AdminDBInterface {
                 return true;
             }
             else{
-                throw new ApprovalFailedException("Student is not approved");
+                throw new ApprovalFailedException("No Student is for approval");
 
             }
 
@@ -110,12 +112,12 @@ public class AdminDB implements AdminDBInterface {
     }
 
     @Override
-    public int addNewCourseDB( String courseName) throws CourseAlreadyExistException {
+    public int addNewCourseDB( String courseName,int fees) throws CourseAlreadyExistException {
         try {
-            pdstmt = conn.prepareStatement("insert into course values (default,?,?)");
+            pdstmt = conn.prepareStatement("insert into course values (default,?,?,?)");
             pdstmt.setString(1, courseName);
             pdstmt.setInt(2,-1);
-
+            pdstmt.setInt(3,fees);
 
             int rs = pdstmt.executeUpdate();
             if(rs == 0){
@@ -156,6 +158,34 @@ public class AdminDB implements AdminDBInterface {
         return false;
     }
 
+    @Override
+    public List<Student> unApprovedStudent() {
+        try {
+            String sql = "select StudentId,StudentName,StudentEmail,StudentAddress from student where isApproved=?";
+            pdstmt = conn.prepareStatement(sql);
+
+            pdstmt.setString(1,"F");
+            ResultSet rs = pdstmt.executeQuery();
+            List<Student> studentList = new ArrayList<>();
+            while (rs.next()){
+                int studentId = rs.getInt(1);
+                String studentName = rs.getString(2);
+                String studentEmail = rs.getString(3);
+                String studentAddress = rs.getString(4);
+                Student student = new Student();
+                student.setUserId(studentId);
+                student.setName(studentName);
+                student.setEmail(studentEmail);
+                student.setAddress(studentAddress);
+                studentList.add(student);
+            }
+            return studentList;
+        }
+        catch (SQLException ex) {
+            ex.getMessage();
+        }
+        return null;
+    }
 
 
     @Override

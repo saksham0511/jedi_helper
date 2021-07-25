@@ -25,7 +25,7 @@ public class CourseOperations implements CourseInterface{
 
     @Override
     public boolean isCourseAvailable(int courseId) {
-        return false;
+        return true;
     }
 
     @Override

@@ -67,13 +67,13 @@ public class AuthCredDB implements AuthCredDBInterface{
     @Override
     public int registerStudentDB(Student student) {
         try {
-            pdstmt = conn.prepareStatement("insert into student values (default,?,?,?,?,?)");
+            pdstmt = conn.prepareStatement("insert into student values (default,?,?,?,?,?,?)");
             pdstmt.setString(1, student.getName());
             pdstmt.setString(2, student.getEmail());
             pdstmt.setString(3, student.getPassword());
             pdstmt.setString(4, student.getAddress());
             pdstmt.setString(5, "F");
-
+            pdstmt.setString(6,"F");
 
             int rs = pdstmt.executeUpdate();
             return rs;

@@ -8,8 +8,15 @@ pay fees
  */
 
 
+import com.flipkart.bean.Course;
+import com.flipkart.constant.BankEnum;
+import com.flipkart.constant.NotificationType;
+import com.flipkart.constant.PaymentModeEnum;
 import com.flipkart.operations.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class StudentPage {
@@ -36,10 +43,10 @@ public class StudentPage {
             System.out.println(space +
                     "1.Add course\n" +
                     space + "2.Drop course\n" +
-                    space + "3.Register Course\n" +
+                    space + "3.Course Registration\n" +
                     space + "4.View Grades\n" +
                     space + "5.Pay Fees\n" +
-                    space + "6. View Catalog\n");
+                    space + "6.View Registered Courses\n");
             Scanner sc = new Scanner(System.in);
             System.out.print(option);
 
@@ -49,40 +56,22 @@ public class StudentPage {
             System.out.println(frameTop);
             switch (choice) {
                 case 1:
-                    System.out.print(space + "enter course ID to add : ");
-                    int addCourseId = sc.nextInt();
-                    int status = -1;
-                    if (courseOperations.isCourseAvailable(addCourseId)) {
-                        status = studentOperations.addCourse(addCourseId);
-                    }
-                    if (status == -1) {
-                        System.out.println(space + "Course not added");
-                    } else {
-                        System.out.println(space + "Course added successfully");
-                    }
+                    addCourse(studId);
                     break;
                 case 2:
-                    System.out.print(space + "enter course ID to drop : ");
-                    int dropCourseId = sc.nextInt();
-                    boolean dropStatus = false;
-                    dropStatus = studentOperations.dropCourse(dropCourseId);
-                    if (!dropStatus) {
-                        System.out.println(space + "Course not dropped");
-                    } else {
-                        System.out.println(space + "Course dropped succesfully");
-                    }
+                    dropCourse(studId);
                     break;
                 case 3:
+                    courseRegistration(studId);
                     break;
                 case 4:
-                    System.out.print(space + "enter student ID to view grades : ");
-                    int studentId = sc.nextInt();
-                    gradeCardOperations.viewGrades(studentId);
+                    viewGrade(studId);
                     break;
                 case 5:
+                    makePayment(studId);
                     break;
                 case 6:
-                    courseCatalogOperations.viewCatalog();
+                    viewRegisteredCourses(studId);
                     break;
                 default:
                     System.out.println(space + "Invalid Action");
@@ -96,5 +85,187 @@ public class StudentPage {
             }
             System.out.println(frameBottom);
         }
-    };
+    }
+    private void courseRegistration(int studId){
+        int count = 0;
+        Scanner sc = new Scanner(System.in);
+        CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
+        int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
+        if (check>=6){
+            System.out.println(space+"Registration is Alredy Done");
+            return;
+        }
+        while (count<6){
+            System.out.print(space+"Enter Course Id: ");
+            int courseId = sc.nextInt();
+             int status = courseRegistrationInterface.addCourse(courseId,studId);
+             if (status == 23){
+                 System.out.println("Course is Already Added");
+                 continue;
+             }
+             if(status == 1) {
+                 System.out.println(space+"Course Added Successfully");
+             }
+             else{
+                 System.out.println(space+"Incorrect Course Id");
+                 count--;
+             }
+             count++;
+        }
+        System.out.println(space+"Course Registration Succesful");
+    }
+    private void addCourse(int studId){
+        CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
+        int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
+        if (check>=6){
+            System.out.println(space+"Course Limit Exceeded");
+            return;
+        }
+        Scanner sc = new Scanner(System.in);
+        System.out.print(space+"Enter Course Id: ");
+        int courseId = sc.nextInt();
+        int status = courseRegistrationInterface.addCourse(courseId,studId);
+        if(status == 1) {
+            System.out.println(space+"Course Added Successfully");
+        }
+        else{
+            System.out.println(space+"Incorrect Course Id");
+        }
+    }
+
+    private void dropCourse(int studId){
+        CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
+        int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
+        if (check==0){
+            System.out.println(space+"Registered Courses are zero. Can't be dropped");
+            return;
+        }
+        Scanner sc = new Scanner(System.in);
+        System.out.print(space+"Enter Course Id: ");
+        int courseId = sc.nextInt();
+        boolean status = courseRegistrationInterface.removeCourse(courseId,studId);
+        if (status){
+            System.out.println(space+"Course Dropped Successfully");
+        }
+        else {
+            System.out.println(space+"Course Not Dropped");
+        }
+    }
+
+    private void viewRegisteredCourses(int studId){
+        CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
+        int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
+        if (check==0){
+            System.out.println(space+"Complete your Registration");
+            return;
+        }
+        StudentInterface studentInterface = new StudentOperations();
+        List<Course> courseList = studentInterface.getRegisteredCourses(studId);
+        System.out.println(space+"   Registered Courses   ");
+        System.out.println(space+"--------------------------");
+        System.out.println(space+"Course ID"+"     "+"Course Name");
+        for (Course course:courseList){
+            System.out.println(space+course.getCourseId()+"          "+course.getCourseName());
+        }
+    }
+    private void viewGrade(int studId){
+        CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
+        int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
+        if (check==0){
+            System.out.println(space+"Complete your Registration");
+            return;
+        }
+        GradeCardInterface gradeCardInterface = new GradeCardOperations();
+        HashMap<Course,String> courseGrade = gradeCardInterface.viewGrades(studId);
+        System.out.println(space+"                   Report Card");
+        System.out.println(space+"---------------------------------------------------");
+
+        System.out.println(space+"Course ID"+"     "+"Course Grade"+"             "+"Course Name");
+
+        for(HashMap.Entry<Course, String> cg :courseGrade.entrySet()) {
+                if (cg.getValue().equals("X")){
+                        System.out.println(space+cg.getKey().getCourseId()+"          "+"Grade Not Assigned"+
+                                "       "+cg.getKey().getCourseName());
+                }
+                else {
+                    System.out.println(space+cg.getKey().getCourseId()+"          "+cg.getValue()+
+                            "          "+cg.getKey().getCourseName());
+                }
+        }
+    }
+
+    private void makePayment(int studId){
+        CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
+        int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
+        if (check==0){
+            System.out.println(space+"Complete your Registration");
+            return;
+        }
+        StudentInterface studentInterface = new StudentOperations();
+        boolean checkFeePaid = studentInterface.isFeefeespaidDB(studId);
+        if (checkFeePaid){
+            System.out.println(space+"Your Fees is Already Paid");
+            return;
+        }
+        PaymentInterface paymentInterface = new PaymentOperations();
+        int amount = paymentInterface.getPayment(studId);
+        System.out.println(space+"Your Amount is: "+amount);
+        System.out.print(space+"Do you want to continue (Y/N) : ");
+        Scanner sc = new Scanner(System.in);
+        String choice = sc.next();
+        if (choice.equals("Y")){
+                System.out.println(space+"Payement Mode");
+                System.out.println(space+"1.Online Mode");
+                System.out.println(space+"2.Offline Mode");
+                System.out.print(space+"Option:");
+                int mode = sc.nextInt();
+                if (mode == 1){
+                    System.out.println(space+"Select Online Mode of Payment");
+                    int index = 1;
+                    for (PaymentModeEnum modeEnum: PaymentModeEnum.values()){
+                        if (modeEnum.toString().equals("OFFLINE"))
+                            continue;;
+                        System.out.println(space+index+"."+modeEnum);
+                        index++;
+                    }
+                    System.out.print(space+"Option:");
+                    int onlineModeChoice = sc.nextInt();
+                    PaymentModeEnum onlineMode = PaymentModeEnum.getModeofPayment(onlineModeChoice);
+                    if (onlineMode == null){
+                        System.out.println(space+"Invalid Choice");
+                        return;
+                    }
+                    System.out.println(space+"Select Bank");
+                    index=1;
+                    for (BankEnum bankEnum:BankEnum.values()){
+                        if (onlineMode.toString().equals("CASH"))
+                                continue;
+                        System.out.println(space+index+"."+bankEnum);
+                        index++;
+                    }
+                    System.out.print(space+"Option:");
+                    int bankChoice  = sc.nextInt();
+                    BankEnum bank = BankEnum.getBankName(bankChoice);
+                    if (bank == null){
+                        System.out.println(space+"Invalid Choice");
+                        return;
+                    }
+                    NotificationInterface notificationInterface = new NotificationOperations();
+                    int status = notificationInterface.sendNotification(NotificationType.PAYMENT,studId,onlineMode,bank,amount);
+                    if (status != 0){
+                        System.out.println(space+"Payment Successful");
+                        System.out.println(space+"Your Payment ID: "+status);
+                    }
+                    else {
+                        System.out.println(space+"Payment Unsuccessful");
+                    }
+                }
+                else if (mode == 2){
+                        System.out.println(space+"Pay your fees at Account Office and Admin will Approve it.!! Thanks");
+                }
+                else {
+                    System.out.println(space+"Invalid Choice");
+                }
+        }
+    }
 }

@@ -51,10 +51,10 @@ public class AdminOperations implements AdminInterface {
     }
 
     @Override
-    public int addNewCourse(String courseName) throws CourseAlreadyExistException {
+    public int addNewCourse(String courseName,int fees) throws CourseAlreadyExistException {
         try {
             adminDBInterface = new AdminDB();
-        return adminDBInterface.addNewCourseDB(courseName);
+        return adminDBInterface.addNewCourseDB(courseName,fees);
         }
         catch (Exception ex){
             throw ex;
@@ -72,6 +72,13 @@ public class AdminOperations implements AdminInterface {
         catch(Exception ex){
             throw ex;
         }
+    }
+
+    @Override
+    public List<Student> unApprovedStudent() {
+        AdminDBInterface adminDBInterface = new AdminDB();
+        List<Student> studentList = adminDBInterface.unApprovedStudent();
+        return studentList;
     }
 
 
