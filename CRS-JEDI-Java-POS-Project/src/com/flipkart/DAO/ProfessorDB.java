@@ -6,6 +6,7 @@ import com.flipkart.constant.SQlQueriesConstants;
 import com.flipkart.exception.ApprovalFailedException;
 import com.flipkart.exception.IncorrectDetailsException;
 import com.flipkart.exception.ProfessorAlreadyExistException;
+import com.flipkart.utils.DBUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,24 +14,13 @@ import java.util.List;
 
 public class ProfessorDB implements ProfessorDBInterface {
 
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
-    static final String USER = "root";
-    static final String PASS = "root";
     Connection conn = null;
     PreparedStatement pdstmt = null;
     Statement stmt = null;
     PreparedStatement pdstmt2 = null;
 
     public ProfessorDB(){
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-        }catch(SQLException se){
-            se.printStackTrace();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        conn = DBUtil.getConnection();
     }
     @Override
     public boolean teachCourseDB(int profId, int courseId){

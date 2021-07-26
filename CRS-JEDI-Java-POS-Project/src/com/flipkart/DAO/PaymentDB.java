@@ -2,28 +2,16 @@ package com.flipkart.DAO;
 
 import com.flipkart.constant.SQlQueriesConstants;
 import com.flipkart.exception.CourseAlreadyExistException;
+import com.flipkart.utils.DBUtil;
 
 import java.sql.*;
 
 public class PaymentDB implements PaymentDBInterface{
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
-    static final String USER = "root";
-    static final String PASS = "root";
     Connection conn = null;
     PreparedStatement pdstmt = null;
     Statement stmt = null;
     public PaymentDB(){
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-        }catch(SQLException se){
-
-            se.printStackTrace();
-        }catch(Exception e){
-
-            e.printStackTrace();
-        }
+        conn = DBUtil.getConnection();
 
     }
     @Override

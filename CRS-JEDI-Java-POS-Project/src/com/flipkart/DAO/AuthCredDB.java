@@ -3,29 +3,17 @@ package com.flipkart.DAO;
 import com.flipkart.bean.Student;
 import com.flipkart.constant.Role;
 import com.flipkart.constant.SQlQueriesConstants;
+import com.flipkart.utils.DBUtil;
 
 import java.sql.*;
 
 public class AuthCredDB implements AuthCredDBInterface{
 
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
-    static final String USER = "root";
-    static final String PASS = "root";
     Connection conn = null;
     PreparedStatement pdstmt = null;
     Statement stmt = null;
     public AuthCredDB(){
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-        }catch(SQLException se){
-
-            se.printStackTrace();
-        }catch(Exception e){
-
-            e.printStackTrace();
-        }
+        conn = DBUtil.getConnection();
 
     }
     @Override

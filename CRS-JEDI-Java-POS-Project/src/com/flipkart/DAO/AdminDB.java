@@ -4,6 +4,7 @@ import com.flipkart.bean.Student;
 import com.flipkart.constant.SQlQueriesConstants;
 import com.flipkart.exception.*;
 import com.flipkart.operations.AdminOperations;
+import com.flipkart.utils.DBUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,24 +14,11 @@ import java.util.logging.Logger;
 public class AdminDB implements AdminDBInterface {
 
     private static final Logger logger = Logger.getLogger(String.valueOf(AdminOperations.class));
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
-    static final String USER = "root";
-    static final String PASS = "root";
     Connection conn = null;
     PreparedStatement pdstmt = null;
     Statement stmt = null;
     public AdminDB(){
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-        }catch(SQLException se){
-
-            se.printStackTrace();
-        }catch(Exception e){
-
-            e.printStackTrace();
-        }
+        conn = DBUtil.getConnection();
 
     }
     @Override
