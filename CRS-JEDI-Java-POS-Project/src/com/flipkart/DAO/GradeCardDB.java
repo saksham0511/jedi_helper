@@ -1,6 +1,7 @@
 package com.flipkart.DAO;
 
 import com.flipkart.bean.Course;
+import com.flipkart.constant.SQlQueriesConstants;
 
 import java.sql.*;
 import java.util.*;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class GradeCardDB implements GradeCardDBInterface{
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/crsproject";
+    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
     static final String USER = "root";
     static final String PASS = "root";
     Connection conn = null;
@@ -30,8 +31,7 @@ public class GradeCardDB implements GradeCardDBInterface{
     @Override
     public HashMap<Course, String> viewGradesDB(int studId) {
         try {
-            String sql = "select gradecard.courseId,course.coursename,gradecard.Grade from gradecard natural join course where studentId=?";
-            pdstmt = conn.prepareStatement(sql);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.GET_GRADE_CARD);
             pdstmt.setInt(1,studId);
             ResultSet rs = pdstmt.executeQuery();
             HashMap<Course, String> courseGrade = new HashMap<Course, String>();

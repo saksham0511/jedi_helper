@@ -1,14 +1,5 @@
 package com.flipkart.application;
 
-/*
-add course
-remove course
-add professor
-remove professor
-approve student
-approve grades
- */
-
 
 import com.flipkart.bean.Student;
 import com.flipkart.constant.BankEnum;
@@ -28,6 +19,16 @@ public class AdminPage {
     static String space = "                                             ";
     static String option = space + "Option : ";
     static String exit = "--------------------------------------------------------------EXIT----------------------------------------------------------------------";
+
+    /**
+     * This method is used to select from Admin operations
+     * @throws ProfessorAlreadyExistException
+     * @throws CourseAlreadyExistException
+     * @throws CourseRemovalFailedException
+     * @throws ApprovalFailedException
+     * @throws ProfessorRemovalFailedException
+     */
+
     public void activity() throws ProfessorAlreadyExistException, CourseAlreadyExistException, CourseRemovalFailedException, ApprovalFailedException, ProfessorRemovalFailedException {
 
         courseCatalogOperations = new CourseCatalogOperations();
@@ -79,7 +80,7 @@ public class AdminPage {
                         System.out.println(space + ex.getMessage());
                     }
                     break;
-                case 3: //Approve student
+                case 3:
                     try {
                         boolean status = false;
                         status = adminOperations.approveStudent();
@@ -147,6 +148,10 @@ public class AdminPage {
         }
         System.out.println(frameBottom);
     }
+
+    /**
+     * Method to display list of unapproved students
+     */
     private void unapprovedStudent(){
         AdminInterface adminInterface = new AdminOperations();
         List<Student> studentList = adminInterface.unApprovedStudent();
@@ -160,6 +165,10 @@ public class AdminPage {
             System.out.println(student.getAddress());
         }
     }
+
+    /**
+     * This method is used to approve fee payment of student
+     */
     private void approveStudentFees(){
         System.out.print(space+"Enter Student ID:");
         Scanner sc = new Scanner(System.in);

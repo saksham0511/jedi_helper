@@ -1,6 +1,7 @@
 package com.flipkart.DAO;
 
 import com.flipkart.bean.Course;
+import com.flipkart.constant.SQlQueriesConstants;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class CourseCatalogDB implements CourseCatalogDBInterface{
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/crsproject";
+    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
     static final String USER = "root";
     static final String PASS = "root";
     Connection conn = null;
@@ -39,8 +40,7 @@ public class CourseCatalogDB implements CourseCatalogDBInterface{
     public List<Course> viewCatalogDB() {
         List<Course> courseList = new ArrayList<>();
         try {
-            String sqlQuery = "select * from course";
-            pdstmt = conn.prepareStatement(sqlQuery);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.VIEW_COURSE_CATALOG);
             ResultSet rs = pdstmt.executeQuery();
             while(rs.next()){
                 Course course = new Course();

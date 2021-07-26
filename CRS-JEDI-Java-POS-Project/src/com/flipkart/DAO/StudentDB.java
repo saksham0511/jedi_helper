@@ -1,6 +1,7 @@
 package com.flipkart.DAO;
 
 import com.flipkart.bean.Course;
+import com.flipkart.constant.SQlQueriesConstants;
 import com.flipkart.exception.CourseRemovalFailedException;
 import com.flipkart.exception.ProfessorAlreadyExistException;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class StudentDB implements StudentDBInterface{
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/crsproject";
+    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
     static final String USER = "root";
     static final String PASS = "root";
     Connection conn = null;
@@ -31,8 +32,7 @@ public class StudentDB implements StudentDBInterface{
     @Override
     public List<Course> getRegisteredCoursesDB(int studId) {
         try {
-            String sql = "select course.CourseId,course.CourseName from course natural join gradecard where gradecard.studentId = ?;";
-            pdstmt = conn.prepareStatement(sql);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.GET_STUDENT_COURSES);
             pdstmt.setInt(1,studId);
             List<Course> courseList = new ArrayList<>();
             ResultSet rs = pdstmt.executeQuery();
@@ -54,8 +54,7 @@ public class StudentDB implements StudentDBInterface{
     @Override
     public boolean isFeefeespaidDB(int studentId) {
         try {
-            String sql = "select isFeePaid from student where StudentId=?";
-            pdstmt = conn.prepareStatement(sql);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.CHECK_PAYMENT_STATUS_FOR_STUDENT);
             pdstmt.setInt(1,studentId);
             ResultSet rs = pdstmt.executeQuery();
             if (rs.next()){

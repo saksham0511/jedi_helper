@@ -1,19 +1,12 @@
 package com.flipkart.application;
 
-/*register for course
-Add course
-Drop course
-view grade card
-pay fees
- */
-
-
 import com.flipkart.bean.Course;
 import com.flipkart.constant.BankEnum;
 import com.flipkart.constant.NotificationType;
 import com.flipkart.constant.PaymentModeEnum;
 import com.flipkart.operations.*;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +23,11 @@ public class StudentPage {
     CourseRegistrationInterface courseRegistrationOperations;
     GradeCardInterface gradeCardOperations;
     CourseCatalogInterface courseCatalogOperations;
+
+    /**
+     * This method is used to select from Student operations
+     * @param studId
+     */
     public void activity(int studId){
 
         studentOperations = new StudentOperations();
@@ -86,6 +84,11 @@ public class StudentPage {
             System.out.println(frameBottom);
         }
     }
+
+    /**
+     * This method is used by Student for course registration
+     * @param studId
+     */
     private void courseRegistration(int studId){
         int count = 0;
         Scanner sc = new Scanner(System.in);
@@ -114,6 +117,11 @@ public class StudentPage {
         }
         System.out.println(space+"Course Registration Succesful");
     }
+
+    /**
+     * This method is used to add course for the student
+     * @param studId
+     */
     private void addCourse(int studId){
         CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
         int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
@@ -133,6 +141,10 @@ public class StudentPage {
         }
     }
 
+    /**
+     * This method is used to remove course for the student
+     * @param studId
+     */
     private void dropCourse(int studId){
         CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
         int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
@@ -152,6 +164,10 @@ public class StudentPage {
         }
     }
 
+    /**
+     * This method is used by student to view all the registered courses
+     * @param studId
+     */
     private void viewRegisteredCourses(int studId){
         CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
         int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
@@ -168,6 +184,11 @@ public class StudentPage {
             System.out.println(space+course.getCourseId()+"          "+course.getCourseName());
         }
     }
+
+    /**
+     * This method is used by student to view the grades
+     * @param studId
+     */
     private void viewGrade(int studId){
         CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
         int check = courseRegistrationInterface.numOfRegisteredCourses(studId);
@@ -194,6 +215,10 @@ public class StudentPage {
         }
     }
 
+    /**
+     * This method is used by student to make payment
+     * @param studId
+     */
     private void makePayment(int studId){
         CourseRegistrationInterface courseRegistrationInterface = new CourseRegistrationOperations();
         int check = courseRegistrationInterface.numOfRegisteredCourses(studId);

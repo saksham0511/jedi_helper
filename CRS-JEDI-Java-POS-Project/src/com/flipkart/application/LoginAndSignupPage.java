@@ -20,6 +20,14 @@ public class LoginAndSignupPage {
     static String option = space + "Option : ";
     static String exit = "--------------------------------------------------------------EXIT----------------------------------------------------------------------";
 
+    /**
+     * This method is used for user login
+     * @throws CourseRemovalFailedException
+     * @throws ProfessorAlreadyExistException
+     * @throws CourseAlreadyExistException
+     * @throws ApprovalFailedException
+     * @throws ProfessorRemovalFailedException
+     */
     public static void login() throws CourseRemovalFailedException, ProfessorAlreadyExistException, CourseAlreadyExistException, ApprovalFailedException, ProfessorRemovalFailedException {
         Scanner sc = new Scanner(System.in);
         System.out.println(frameTop);
@@ -73,6 +81,7 @@ public class LoginAndSignupPage {
                     else{
                         System.out.println("Invalid Credentials");
                     }
+                    break;
                 default : System.out.println("Invalid role");
 
             }
@@ -117,6 +126,14 @@ public class LoginAndSignupPage {
         }
     }
 
+    /**
+     * This method is used for user registration
+     * @throws CourseRemovalFailedException
+     * @throws ProfessorAlreadyExistException
+     * @throws CourseAlreadyExistException
+     * @throws ApprovalFailedException
+     * @throws ProfessorRemovalFailedException
+     */
     public static void signUp() throws CourseRemovalFailedException, ProfessorAlreadyExistException, CourseAlreadyExistException, ApprovalFailedException, ProfessorRemovalFailedException {
         Scanner sc = new Scanner(System.in);
         System.out.print(space + "Are you a student? Y/N " );

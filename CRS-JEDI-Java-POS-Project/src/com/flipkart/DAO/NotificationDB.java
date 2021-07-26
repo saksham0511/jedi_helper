@@ -3,12 +3,13 @@ package com.flipkart.DAO;
 import com.flipkart.constant.BankEnum;
 import com.flipkart.constant.NotificationType;
 import com.flipkart.constant.PaymentModeEnum;
+import com.flipkart.constant.SQlQueriesConstants;
 
 import java.sql.*;
 
 public class NotificationDB implements NotificationDBInterface {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/crsproject";
+    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
     static final String USER = "root";
     static final String PASS = "root";
     Connection conn = null;
@@ -31,8 +32,7 @@ public class NotificationDB implements NotificationDBInterface {
     @Override
     public int sendNotification(NotificationType type, int studentId, PaymentModeEnum modeOfPayment, BankEnum bankEnum, int amount) {
         try {
-            String sql = "insert into notification values (default,?,?)";
-            pdstmt = conn.prepareStatement(sql);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.SEND_NOTIFICATION);
             pdstmt.setString(1,type.toString());
             int id = 0;
             if (type==NotificationType.PAYMENT){
@@ -58,8 +58,7 @@ public class NotificationDB implements NotificationDBInterface {
     @Override
     public boolean studentApprovalDB(int studId) {
         try {
-            String query = "update student set isFeePaid='T' where StudentId = ?";
-            isFee = conn.prepareStatement(query);
+            isFee = conn.prepareStatement(SQlQueriesConstants.UPDATE_PAYMENT_STATUS);
             isFee.setString(1, "T");
             int status = isFee.executeUpdate();
             if (status != 0)
@@ -70,13 +69,20 @@ public class NotificationDB implements NotificationDBInterface {
         return false;
     }
 
+    /**
+     * This method is used to make payment
+     * @param studentId
+     * @param amount
+     * @param modeOfPayment
+     * @param bankEnum
+     * @return Payment Id
+     */
     private int addPayment(int studentId, int amount, PaymentModeEnum modeOfPayment, BankEnum bankEnum) {
         try {
-            String sql = "insert into payment values(?,?,?,?,?);";
             int min = 100000;
             int max = 900000;
             int paymentId = (int)Math.floor(Math.random()*(max-min+1)+min);
-            pdstmtPayment = conn.prepareStatement(sql);
+            pdstmtPayment = conn.prepareStatement(SQlQueriesConstants.MAKE_PAYMENT);
             pdstmtPayment.setInt(1,paymentId);
             pdstmtPayment.setInt(2,studentId);
             pdstmtPayment.setString(3,bankEnum.toString());
@@ -84,8 +90,7 @@ public class NotificationDB implements NotificationDBInterface {
             pdstmtPayment.setInt(5,amount);
             int check = pdstmtPayment.executeUpdate();
             if (check!=0){
-                String query = "update student set isFeePaid=? where StudentId = ?";
-                isFee = conn.prepareStatement(query);
+                isFee = conn.prepareStatement(SQlQueriesConstants.UPDATE_PAYMENT_STATUS);
                 isFee.setString(1,"T");
                 isFee.setInt(2,studentId);
                 int status = isFee.executeUpdate();

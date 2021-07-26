@@ -1,17 +1,20 @@
 package com.flipkart.DAO;
 
 import com.flipkart.bean.Student;
+import com.flipkart.constant.SQlQueriesConstants;
 import com.flipkart.exception.*;
+import com.flipkart.operations.AdminOperations;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class AdminDB implements AdminDBInterface {
 
-
+    private static final Logger logger = Logger.getLogger(String.valueOf(AdminOperations.class));
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/crsproject";
+    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
     static final String USER = "root";
     static final String PASS = "root";
     Connection conn = null;
@@ -34,8 +37,7 @@ public class AdminDB implements AdminDBInterface {
     public boolean approveStudentDB() throws ApprovalFailedException {
         try {
             stmt = conn.createStatement();
-            String sqlQuery = "Select count(*) from student where isapproved='F'";
-            ResultSet rs = stmt.executeQuery(sqlQuery);
+            ResultSet rs = stmt.executeQuery(SQlQueriesConstants.UNAPPROVED_STUDENT_COUNT);
             int id = 0;
             if (rs != null) {
                 rs.last();
@@ -44,8 +46,7 @@ public class AdminDB implements AdminDBInterface {
 
             int count =  rs.getInt(id);
             if(count > 0) {
-                String sqlQuery1 = "Update student set isapproved='T'";
-                int rs1 = stmt.executeUpdate(sqlQuery1);
+                int rs1 = stmt.executeUpdate(SQlQueriesConstants.APPROVE_STUDENT_QUERY);
                 stmt.close();
                 return true;
             }
@@ -66,8 +67,7 @@ public class AdminDB implements AdminDBInterface {
     @Override
     public boolean removeProfessorDB(int profId) throws ProfessorRemovalFailedException {
         try {
-            String sql = "DELETE FROM professor WHERE professorid=?";
-            pdstmt = conn.prepareStatement(sql);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.REMOVE_PROFESSOR);
 
             pdstmt.setInt(1,profId);
             int rs = pdstmt.executeUpdate();
@@ -91,7 +91,7 @@ public class AdminDB implements AdminDBInterface {
     @Override
     public int addProfessorDB(String name, String email, String address,String Password) throws ProfessorAlreadyExistException {
         try {
-            pdstmt = conn.prepareStatement("insert into professor values (default,?,?,?,?)");
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.ADD_PROFESSOR);
             pdstmt.setString(1, name);
             pdstmt.setString(2, email);
             pdstmt.setString(3, address);
@@ -114,7 +114,7 @@ public class AdminDB implements AdminDBInterface {
     @Override
     public int addNewCourseDB( String courseName,int fees) throws CourseAlreadyExistException {
         try {
-            pdstmt = conn.prepareStatement("insert into course values (default,?,?,?)");
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.ADD_NEW_COURSE);
             pdstmt.setString(1, courseName);
             pdstmt.setInt(2,-1);
             pdstmt.setInt(3,fees);
@@ -137,8 +137,7 @@ public class AdminDB implements AdminDBInterface {
     @Override
     public boolean removeCourseDB(int courseId) throws CourseRemovalFailedException {
         try {
-            String sql = "DELETE FROM course WHERE courseID=?";
-            pdstmt = conn.prepareStatement(sql);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.DELETE_COURSE);
 
             pdstmt.setInt(1,courseId);
             int rs = pdstmt.executeUpdate();
@@ -161,8 +160,7 @@ public class AdminDB implements AdminDBInterface {
     @Override
     public List<Student> unApprovedStudent() {
         try {
-            String sql = "select StudentId,StudentName,StudentEmail,StudentAddress from student where isApproved=?";
-            pdstmt = conn.prepareStatement(sql);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.GET_UNAPPROVED_STUDENTS);
 
             pdstmt.setString(1,"F");
             ResultSet rs = pdstmt.executeQuery();
@@ -192,8 +190,7 @@ public class AdminDB implements AdminDBInterface {
     public boolean isApprovedDB(int studentId) {
 
         try {
-            String sql = "select isapproved from student where studentid=?";
-            pdstmt = conn.prepareStatement(sql);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.IS_STUDENT_APPROVED);
 
             pdstmt.setInt(1,studentId);
             ResultSet rs = pdstmt.executeQuery();
@@ -209,7 +206,7 @@ public class AdminDB implements AdminDBInterface {
             }
         }
         catch (SQLException ex) {
-            ex.getMessage();
+            logger.info(ex.getMessage());
         }
         return false;
     }

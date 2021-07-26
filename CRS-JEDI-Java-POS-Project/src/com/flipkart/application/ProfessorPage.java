@@ -2,7 +2,7 @@ package com.flipkart.application;
 
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Student;
-import com.flipkart.exception.GradeNotAddedException;
+import com.flipkart.exception.*;
 import com.flipkart.operations.CourseCatalogInterface;
 import com.flipkart.operations.CourseCatalogOperations;
 import com.flipkart.operations.ProfessorInterface;
@@ -13,31 +13,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-/*
-select course to teach
-view enrolled students
-add grades
-view courses
- */
 public class ProfessorPage {
     static String space = "                                             ";
     static String space2 = "                                   ";
+    static String frameTop = "\n--------------------------------------------WELCOME TO COURSE REGISTRATION SYSTEM-------------------------------------------------------";
+    static String frameBottom = "----------------------------------------------------------------------------------------------------------------------------------------";
+    static String spaced = "                                             ";
+    static String option = space + "Option : ";
+    static String exit = "--------------------------------------------------------------EXIT----------------------------------------------------------------------";
     ProfessorInterface professorOperations;
     CourseCatalogInterface courseCatalogOperations;
+
+    /**
+     * This method is used to select from Professor operations
+     * @param profId
+     * @throws SQLException
+     */
     public void activity(int profId) throws SQLException {
 
         professorOperations = new ProfessorOperations();
         courseCatalogOperations = new CourseCatalogOperations();
+        System.out.println(frameTop);
+        while(true) {
         System.out.println(space + "select an option from below\n");
         System.out.println("" +
                 space + "1.Select Course to Teach\n" +
                 space + "2.View Enrolled Students\n" +
                 space + "3.View Catalog\n" +
                 space + "4.Add Grades\n"
-            );
+        );
         Scanner sc = new Scanner(System.in);
+        System.out.print(option);
         int choice = sc.nextInt();
-        switch(choice){
+        switch (choice) {
             case 1:
                 teachCourse(profId);
                 break;
@@ -58,12 +66,24 @@ public class ProfessorPage {
                 System.out.println("Invalid Action");
                 break;
         }
+        System.out.print(space + "Do you want to continue as professor(Y/N) : ");
+        String Continue = sc.next();
+        if (Continue.equals("N")) {
+            System.out.println(exit);
+            break;
+        }
+        System.out.println(frameBottom);
+    }
     }
 
+    /**
+     * This method is used by Professor to select course to teach
+     * @param profId
+     */
     private void teachCourse(int profId){
         try {
             Scanner sc = new Scanner(System.in);
-            System.out.println(space + "enter course ID to teach");
+            System.out.println(space + "Enter course ID to teach : ");
             int courseIdToTeach = sc.nextInt();
             boolean status = false;
             status = professorOperations.teachCourse(profId, courseIdToTeach);
@@ -78,10 +98,15 @@ public class ProfessorPage {
         }
     }
 
+    /**
+     * This method is used to view list of enrolled students
+     * @param profId
+     */
     private void viewEnrolledStudents(int profId){
         try {
             Scanner sc = new Scanner(System.in);
-            System.out.println(space + "Enter course ID to view enrolled students");
+            System.out.println(space + "Enter course ID to view enrolled students : ");
+            System.out.print(option);
             int courseIdToViewStudents = sc.nextInt();
             List<Student> studentList = new ArrayList<>();
             studentList = professorOperations.getEnrolledStudents(courseIdToViewStudents);
@@ -95,6 +120,10 @@ public class ProfessorPage {
             }
     }
 
+    /**
+     * This method is used by Professor to view Course Catalog
+     * @param profId
+     */
     private void viewCatalog(int profId){
         try {
             List<Course> courseList = new ArrayList<>();
@@ -109,6 +138,10 @@ public class ProfessorPage {
         }
     }
 
+    /**
+     * This method is used by Professor to give grades to student
+     * @param profId
+     */
     private void addGrades(int profId){
         Scanner sc = new Scanner(System.in);
         System.out.println(space + "enter student ID to add grade");

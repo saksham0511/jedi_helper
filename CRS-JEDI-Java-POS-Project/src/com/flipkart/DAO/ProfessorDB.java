@@ -2,6 +2,7 @@ package com.flipkart.DAO;
 
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Student;
+import com.flipkart.constant.SQlQueriesConstants;
 import com.flipkart.exception.ApprovalFailedException;
 import com.flipkart.exception.IncorrectDetailsException;
 import com.flipkart.exception.ProfessorAlreadyExistException;
@@ -13,7 +14,7 @@ import java.util.List;
 public class ProfessorDB implements ProfessorDBInterface {
 
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/crsproject";
+    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
     static final String USER = "root";
     static final String PASS = "root";
     Connection conn = null;
@@ -35,15 +36,13 @@ public class ProfessorDB implements ProfessorDBInterface {
     public boolean teachCourseDB(int profId, int courseId){
         try {
             int status=0;
-            String query = "select professorid from course where courseid = ?";
-            pdstmt2 = conn.prepareStatement(query);
+            pdstmt2 = conn.prepareStatement(SQlQueriesConstants.GET_PROFESSOR_DETAILS);
             pdstmt2.setInt(1, courseId);
             ResultSet rs2 = pdstmt2.executeQuery();
             if(rs2.next())
                 status = rs2.getInt(1);
             if (status == -1) {
-                String sqlQuery = "update course set professorid = ? where courseid = ?";
-                pdstmt = conn.prepareStatement(sqlQuery);
+                pdstmt = conn.prepareStatement(SQlQueriesConstants.UPDATE_PROFESSOR_COURSES);
                 pdstmt.setInt(1, profId);
                 pdstmt.setInt(2, courseId);
                 int rs = pdstmt.executeUpdate();
@@ -68,8 +67,7 @@ public class ProfessorDB implements ProfessorDBInterface {
         List<Student> studentList = new ArrayList<>();
         String demo = new String("demo");
         try {
-            String sqlQuery = "select student.studentid, student.studentname from student natural join gradecard where CourseID = ?";
-            pdstmt = conn.prepareStatement(sqlQuery);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.GET_ENROLLED_STUDENTS);
             pdstmt.setInt(1, courseId);
             ResultSet rs = pdstmt.executeQuery();
             while(rs.next()){
@@ -88,8 +86,7 @@ public class ProfessorDB implements ProfessorDBInterface {
     @Override
     public boolean addGradesDB(int studId, int courseId, String grade) {
         try {
-            String sqlQuery = "update gradecard set Grade = ? where CourseId = ? and StudentId = ?";
-            pdstmt = conn.prepareStatement(sqlQuery);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.UPDATE_GRADE_CARD);
             pdstmt.setString(1, grade);
             pdstmt.setInt(2, courseId);
             pdstmt.setInt(3, studId);

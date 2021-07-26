@@ -1,12 +1,13 @@
 package com.flipkart.DAO;
 
 import com.flipkart.bean.Course;
+import com.flipkart.constant.SQlQueriesConstants;
 
 import java.sql.*;
 
 public class CourseRegistrationDB implements CourseRegistrationDBInterface{
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/crsproject";
+    static final String DB_URL = "jdbc:mysql://localhost/CRSProject";
     static final String USER = "root";
     static final String PASS = "root";
     Connection conn = null;
@@ -29,7 +30,7 @@ public class CourseRegistrationDB implements CourseRegistrationDBInterface{
     @Override
     public int addCourseDB(int courseId,int studentId) {
         try {
-            pdstmtForCourse = conn.prepareStatement("select count(CourseId) from course where CourseId=?");
+            pdstmtForCourse = conn.prepareStatement(SQlQueriesConstants.GET_COURSE_COUNT);
             pdstmtForCourse.setInt(1,courseId);
             ResultSet resultSet = pdstmtForCourse.executeQuery();
             int id = 0;
@@ -42,7 +43,7 @@ public class CourseRegistrationDB implements CourseRegistrationDBInterface{
                 check = resultSet.getInt(1);
             }
             if(check !=0 ) {
-                pdstmt = conn.prepareStatement("insert into gradecard values (?,?,?)");
+                pdstmt = conn.prepareStatement(SQlQueriesConstants.ADD_COURSE_FOR_STUDENT);
                 pdstmt.setInt(1, courseId);
                 pdstmt.setInt(2, studentId);
                 pdstmt.setString(3, "X");
@@ -65,8 +66,7 @@ public class CourseRegistrationDB implements CourseRegistrationDBInterface{
     @Override
     public boolean removeCourseDB(int courseId,int studId) {
         try {
-            String sql = "DELETE FROM gradecard WHERE CourseId=? AND StudentId=?";
-            pdstmt = conn.prepareStatement(sql);
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.REMOVE_COURSE_FOR_STUDENT);
 
             pdstmt.setInt(1,courseId);
             pdstmt.setInt(2,studId);
@@ -94,7 +94,7 @@ public class CourseRegistrationDB implements CourseRegistrationDBInterface{
     @Override
     public int numOfRegisteredCourses(int studId) {
         try {
-            pdstmt = conn.prepareStatement("select count(*) from gradecard where StudentId=?");
+            pdstmt = conn.prepareStatement(SQlQueriesConstants.COUNT_OF_REGISTERED_COURSES_OF_STUDENT);
             pdstmt.setInt(1, studId);
             ResultSet rs = pdstmt.executeQuery();
             int id = 0;
